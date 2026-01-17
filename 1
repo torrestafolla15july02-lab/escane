@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Usuarios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Estilos de la página de login */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .login-box {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .login-box h1 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .login-box p {
+            color: var(--gray);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .login-note {
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        /* Estilos del dashboard */
+        .dashboard {
+            display: none;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+        
+        .logo h2 {
+            color: var(--secondary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info span {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .logout-btn {
+            padding: 8px 15px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            height: fit-content;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: var(--secondary);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: #f0f7ff;
+            color: var(--primary);
+        }
+        
+        .main-content {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-header h3 {
+            color: var(--secondary);
+            font-size: 24px;
+        }
+        
+        .page-header .btn {
+            width: auto;
+            padding: 10px 20px;
+        }
+        
+        /* Estilos de la tabla de usuarios */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th {
+            background-color: #f8f9fa;
+            color: var(--secondary);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #eee;
+        }
+        
+        table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.3s;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .action-btn.view {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .action-btn.edit {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .action-btn.delete {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        /* Estilos del dashboard de estadísticas */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .card-icon.users {
+            background-color: var(--primary);
+        }
+        
+        .card-icon.active {
+            background-color: var(--success);
+        }
+        
+        .card-icon.pending {
+            background-color: var(--warning);
+        }
+        
+        .card-icon.follow-up {
+            background-color: #9b59b6;
+        }
+        
+        .card-content h4 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+        
+        .card-content p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .card-content .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        /* Estilos del pie de página */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Página de Login -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <h1><i class="fas fa-user-shield"></i> Acceso al Sistema</h1>
+            <p>Ingresa tus credenciales para acceder al panel de administración</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Nombre de usuario</label>
+                    <input type="text" id="username" class="form-control" placeholder="Ingresa tu nombre de usuario" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Contraseña (opcional)</label>
+                    <input type="password" id="password" class="form-control" placeholder="Ingresa tu contraseña (opcional)">
+                </div>
+                
+                <button type="submit" class="btn">Iniciar Sesión <i class="fas fa-sign-in-alt"></i></button>
+            </form>
+            
+            <div class="login-note">
+                <p><strong>Nota:</strong> La contraseña es opcional para esta versión de demostración. Para ingresar puedes usar cualquier nombre de usuario.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <header>
+            <div class="container header-content">
+                <div class="logo">
+                    <i class="fas fa-database"></i>
+                    <h2>Sistema de Gestión</h2>
+                </div>
+                
+                <div class="user-info">
+                    <span id="loggedUser">Usuario</span>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container dashboard-content">
+            <aside class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active" data-page="dashboardPage"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" data-page="usersPage"><i class="fas fa-users"></i> Usuarios</a></li>
+                    <li><a href="#" data-page="trackingPage"><i class="fas fa-chart-line"></i> Seguimiento</a></li>
+                    <li><a href="#" data-page="reportsPage"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+                    <li><a href="#" data-page="settingsPage"><i class="fas fa-cog"></i> Configuración</a></li>
+                </ul>
+            </aside>
+            
+            <main class="main-content">
+                <!-- Dashboard Page (default) -->
+                <div id="dashboardPage" class="page-content">
+                    <div class="page-header">
+                        <h3>Dashboard de Gestión</h3>
+                        <div>Bienvenido, <span id="dashboardUser"></span></div>
+                    </div>
+                    
+                    <div class="stats-cards">
+                        <div class="card">
+                            <div class="card-icon users">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>Usuarios Totales</h4>
+                                <p class="number" id="totalUsers">0</p>
+                                <p>Registrados en el sistema</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-icon active">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>Usuarios Activos</h4>
+                                <p class="number" id="activeUsers">0</p>
+                                <p>Con seguimiento activo</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-icon pending">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>Pendientes</h4>
+                                <p class="number" id="pendingUsers">0</p>
+                                <p>Requieren atención</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-icon follow-up">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>Seguimiento</h4>
+                                <p class="number" id="followUp">0</p>
+                                <p>Procesos en seguimiento</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="page-header">
+                        <h3>Actividad Reciente</h3>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="recentActivityTable">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Actividad</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentActivityBody">
+                                <!-- Las filas se generarán con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Users Page -->
+                <div id="usersPage" class="page-content" style="display: none;">
+                    <div class="page-header">
+                        <h3><i class="fas fa-users"></i> Gestión de Usuarios</h3>
+                        <button class="btn" id="addUserBtn"><i class="fas fa-plus"></i> Agregar Usuario</button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Seguimiento</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Las filas se generarán con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Tracking Page -->
+                <div id="trackingPage" class="page-content" style="display: none;">
+                    <div class="page-header">
+                        <h3><i class="fas fa-chart-line"></i> Seguimiento de Usuarios</h3>
+                        <button class="btn" id="refreshTrackingBtn"><i class="fas fa-sync-alt"></i> Actualizar</button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="trackingTable">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Progreso</th>
+                                    <th>Última Actividad</th>
+                                    <th>Próximo Seguimiento</th>
+                                    <th>Notas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trackingTableBody">
+                                <!-- Las filas se generarán con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Reports Page -->
+                <div id="reportsPage" class="page-content" style="display: none;">
+                    <div class="page-header">
+                        <h3><i class="fas fa-chart-bar"></i> Reportes y Análisis</h3>
+                        <button class="btn"><i class="fas fa-download"></i> Exportar</button>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-chart-bar" style="font-size: 60px; color: #ddd; margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--gray);">Módulo de Reportes</h3>
+                        <p style="color: var(--gray); max-width: 500px; margin: 0 auto;">Esta sección mostrará gráficos y reportes detallados sobre los usuarios y su seguimiento. Conectar con la base de datos para obtener información en tiempo real.</p>
+                    </div>
+                </div>
+                
+                <!-- Settings Page -->
+                <div id="settingsPage" class="page-content" style="display: none;">
+                    <div class="page-header">
+                        <h3><i class="fas fa-cog"></i> Configuración del Sistema</h3>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-cogs" style="font-size: 60px; color: #ddd; margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--gray);">Configuración</h3>
+                        <p style="color: var(--gray); max-width: 500px; margin: 0 auto;">Aquí podrás configurar los parámetros del sistema, permisos de usuario y personalizar la interfaz según tus necesidades.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <footer>
+            <div class="container">
+                <p>Sistema de Gestión de Usuarios &copy; 2023 | Versión de demostración</p>
+                <p>Conecta con tu base de datos para visualizar información en tiempo real</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Datos simulados para la demostración
+        const sampleUsers = [
+            { id: 1, name: "María González", email: "maria@empresa.com", role: "Administrador", status: "active", progress: 95, lastActivity: "2023-11-10", nextFollowUp: "2023-11-17", notes: "Cliente satisfecho con el servicio" },
+            { id: 2, name: "Carlos Rodríguez", email: "carlos@empresa.com", role: "Usuario", status: "active", progress: 75, lastActivity: "2023-11-09", nextFollowUp: "2023-11-16", notes: "Requiere capacitación adicional" },
+            { id: 3, name: "Ana Martínez", email: "ana@empresa.com", role: "Supervisor", status: "inactive", progress: 30, lastActivity: "2023-10-28", nextFollowUp: "2023-11-15", notes: "En proceso de evaluación" },
+            { id: 4, name: "Luis Fernández", email: "luis@empresa.com", role: "Usuario", status: "pending", progress: 50, lastActivity: "2023-11-08", nextFollowUp: "2023-11-14", notes: "Esperando aprobación" },
+            { id: 5, name: "Sofía Ramírez", email: "sofia@empresa.com", role: "Usuario", status: "active", progress: 85, lastActivity: "2023-11-10", nextFollowUp: "2023-11-18", notes: "Alto rendimiento en métricas" },
+            { id: 6, name: "Javier López", email: "javier@empresa.com", role: "Auditor", status: "active", progress: 65, lastActivity: "2023-11-07", nextFollowUp: "2023-11-13", notes: "Necesita revisión de procesos" },
+            { id: 7, name: "Elena Castro", email: "elena@empresa.com", role: "Usuario", status: "inactive", progress: 20, lastActivity: "2023-10-15", nextFollowUp: "2023-11-20", notes: "Baja participación reciente" },
+            { id: 8, name: "Roberto Sánchez", email: "roberto@empresa.com", role: "Supervisor", status: "active", progress: 90, lastActivity: "2023-11-10", nextFollowUp: "2023-11-19", notes: "Liderando equipo de proyecto" }
+        ];
+        
+        const sampleActivities = [
+            { user: "María González", activity: "Actualización de perfil", date: "2023-11-10", status: "Completado" },
+            { user: "Carlos Rodríguez", activity: "Revisión de documentos", date: "2023-11-09", status: "En progreso" },
+            { user: "Ana Martínez", activity: "Registro en sistema", date: "2023-10-28", status: "Completado" },
+            { user: "Luis Fernández", activity: "Solicitud de permisos", date: "2023-11-08", status: "Pendiente" },
+            { user: "Sofía Ramírez", activity: "Carga de archivos", date: "2023-11-10", status: "Completado" }
+        ];
+        
+        // Elementos del DOM
+        const loginPage = document.getElementById('loginPage');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loggedUser = document.getElementById('loggedUser');
+        const dashboardUser = document.getElementById('dashboardUser');
+        const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+        const pageContents = document.querySelectorAll('.page-content');
+        
+        // Funciones para mostrar/ocultar páginas
+        function showPage(pageId) {
+            pageContents.forEach(page => {
+                page.style.display = page.id === pageId ? 'block' : 'none';
+            });
+            
+            sidebarLinks.forEach(link => {
+                if (link.getAttribute('data-page') === pageId) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // Inicializar datos simulados
+        function initializeData() {
+            // Actualizar estadísticas
+            document.getElementById('totalUsers').textContent = sampleUsers.length;
+            document.getElementById('activeUsers').textContent = sampleUsers.filter(user => user.status === 'active').length;
+            document.getElementById('pendingUsers').textContent = sampleUsers.filter(user => user.status === 'pending').length;
+            document.getElementById('followUp').textContent = sampleUsers.filter(user => user.progress > 0).length;
+            
+            // Llenar tabla de usuarios
+            const usersTableBody = document.getElementById('usersTableBody');
+            usersTableBody.innerHTML = '';
+            
+            sampleUsers.forEach(user => {
+                const statusClass = `status-${user.status}`;
+                const statusText = user.status === 'active' ? 'Activo' : 
+                                 user.status === 'inactive' ? 'Inactivo' : 'Pendiente';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="user-avatar">${user.name.charAt(0)}</div>
+                            <div>
+                                <strong>${user.name}</strong><br>
+                                <small>${user.role}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: ${user.progress}%"></div>
+                        </div>
+                        <small>${user.progress}%</small>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn view" data-id="${user.id}"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit" data-id="${user.id}"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete" data-id="${user.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+            
+            // Llenar tabla de seguimiento
+            const trackingTableBody = document.getElementById('trackingTableBody');
+            trackingTableBody.innerHTML = '';
+            
+            sampleUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="user-avatar">${user.name.charAt(0)}</div>
+                            <div>
+                                <strong>${user.name}</strong><br>
+                                <small>${user.email}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: ${user.progress}%"></div>
+                        </div>
+                        <small>${user.progress}% completado</small>
+                    </td>
+                    <td>${user.lastActivity}</td>
+                    <td>${user.nextFollowUp}</td>
+                    <td>${user.notes}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn view" data-id="${user.id}"><i class="fas fa-eye"></i> Detalles</button>
+                            <button class="action-btn edit" data-id="${user.id}"><i class="fas fa-edit"></i> Notas</button>
+                        </div>
+                    </td>
+                `;
+                trackingTableBody.appendChild(row);
+            });
+            
+            // Llenar actividad reciente
+            const recentActivityBody = document.getElementById('recentActivityBody');
+            recentActivityBody.innerHTML = '';
+            
+            sampleActivities.forEach(activity => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="user-avatar" style="width: 30px; height: 30px; font-size: 14px;">${activity.user.charAt(0)}</div>
+                            <div>${activity.user}</div>
+                        </div>
+                    </td>
+                    <td>${activity.activity}</td>
+                    <td>${activity.date}</td>
+                    <td>
+                        <span class="status ${activity.status === 'Completado' ? 'status-active' : 
+                                          activity.status === 'En progreso' ? 'status-pending' : 'status-inactive'}">
+                            ${activity.status}
+                        </span>
+                    </td>
+                `;
+                recentActivityBody.appendChild(row);
+            });
+        }
+        
+        // Event Listeners
+        // Login
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            
+            if (username) {
+                // Guardar el nombre de usuario
+                loggedUser.textContent = username;
+                dashboardUser.textContent = username;
+                
+                // Mostrar dashboard y ocultar login
+                loginPage.style.display = 'none';
+                dashboard.style.display = 'block';
+                
+                // Inicializar datos
+                initializeData();
+                
+                // Mostrar mensaje de bienvenida
+                alert(`¡Bienvenido, ${username}! Has iniciado sesión correctamente.`);
+            } else {
+                alert('Por favor ingresa un nombre de usuario.');
+            }
+        });
+        
+        // Logout
+        logoutBtn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                // Ocultar dashboard y mostrar login
+                dashboard.style.display = 'none';
+                loginPage.style.display = 'flex';
+                
+                // Limpiar el formulario
+                loginForm.reset();
+            }
+        });
+        
+        // Navegación del sidebar
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                showPage(pageId);
+            });
+        });
+        
+        // Botón para agregar usuario
+        document.getElementById('addUserBtn')?.addEventListener('click', function() {
+            alert('Funcionalidad para agregar usuario. En una implementación completa, se abriría un formulario para agregar un nuevo usuario a la base de datos.');
+        });
+        
+        // Botón para actualizar seguimiento
+        document.getElementById('refreshTrackingBtn')?.addEventListener('click', function() {
+            alert('Datos de seguimiento actualizados. En una implementación completa, se sincronizaría con la base de datos en tiempo real.');
+            initializeData(); // Recargar datos
+        });
+        
+        // Delegación de eventos para botones de acción
+        document.addEventListener('click', function(e) {
+            // Botones de acción en tabla de usuarios
+            if (e.target.closest('.action-btn.view')) {
+                const userId = e.target.closest('.action-btn').getAttribute('data-id');
+                const user = sampleUsers.find(u => u.id == userId);
+                alert(`Vista detallada de usuario:\n\nNombre: ${user.name}\nEmail: ${user.email}\nRol: ${user.role}\nEstado: ${user.status}\nProgreso: ${user.progress}%\nÚltima actividad: ${user.lastActivity}`);
+            }
+            
+            if (e.target.closest('.action-btn.edit')) {
+                const userId = e.target.closest('.action-btn').getAttribute('data-id');
+                alert(`Editar usuario con ID: ${userId}\n\nEn una implementación completa, se abriría un formulario para editar los datos del usuario.`);
+            }
+            
+            if (e.target.closest('.action-btn.delete')) {
+                const userId = e.target.closest('.action-btn').getAttribute('data-id');
+                if (confirm(`¿Estás seguro de que deseas eliminar al usuario con ID: ${userId}?`)) {
+                    alert(`Usuario con ID: ${userId} eliminado (en una implementación real).`);
+                }
+            }
+        });
+        
+        // Inicializar mostrando la página de login
+        window.addEventListener('DOMContentLoaded', function() {
+            // Por defecto, mostrar la página de login
+            loginPage.style.display = 'flex';
+            dashboard.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
